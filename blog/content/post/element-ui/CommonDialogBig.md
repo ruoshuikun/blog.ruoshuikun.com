@@ -35,7 +35,12 @@ export default {
     return {  
       // 大弹窗的配置
       dialogBig: {
-        visible: false,
+        visible: false, // 弹窗显示隐藏
+        title: "大弹窗", // 弹窗的标题
+        // showCancelButton: false, // 是否显示取消按钮
+        // showConfirmButton: false, // 是否显示确定按钮
+        // cancelButtonText: "重 置", // 取消按钮的文本内容
+        // confirmButtonText: "创 建", // 确定按钮的文本内容
       },  
     };  
   },
@@ -52,6 +57,8 @@ export default {
 
 >子组件
 
+这里直接使用 `<CommonDialogBig>` 组件是因为在 `main.js` 已经引入
+
 ```vue
 <template>  
   <CommonDialogBig 
@@ -67,7 +74,7 @@ export default {
   
 <script> 
 export default {  
-  name: "parent",  
+  name: "NewAndEdit",  
   components: { Son },   
   data() {  
     return {  
@@ -135,7 +142,7 @@ export default {
  */
 
 export default {
-  name: "",
+  name: "CommonDialogBig",
   inject: ["dialogBigVisible"],
   props: {
     loading: {
