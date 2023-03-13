@@ -41,12 +41,13 @@ export default {
         // showConfirmButton: false, // 是否显示确定按钮
         // cancelButtonText: "重 置", // 取消按钮的文本内容
         // confirmButtonText: "创 建", // 确定按钮的文本内容
+        // confirmButtonLoading: false, // 确定按钮的loading
       },  
     };  
   },
   provide() {
     return {
-      dialogBigVisible: this.dialogBig,
+      dialogBigAttributes: this.dialogBig,
     };
   },  
 };  
@@ -64,7 +65,6 @@ export default {
   <CommonDialogBig 
     @confirm="commonDialogConfirm" 
     @cancel="commonDialogCancel"
-    :loading="commonDialogBigLoading"
   >
 	  <el-form>
 	  <!-- form 表单部分 -->
@@ -89,10 +89,10 @@ export default {
     },
     commonDialogConfirm() {
       console.log("大弹窗-子组件确认了");
-      this.commonDialogBigLoading = true;
+      this.dialogBigAttributes.confirmButtonLoading = true;
       // 模拟接口请求，给按钮添加loading的效果
       setTimeout(() => {
-        this.commonDialogBigLoading = false;
+        this.dialogBigAttributes.confirmButtonLoading = false;
         this.dialogBigVisible.visible = false;
       }, 1000);
     },
@@ -109,7 +109,7 @@ export default {
 ```vue
 <template>
   <el-dialog
-    :visible.sync="dialogBigVisible.visible"
+    :visible.sync="dialogBigAttributes.visible"
     :before-close="handleBeforeClose"
     width="1040px"
     class="asset-form"
@@ -118,8 +118,8 @@ export default {
     <!-- dialog 主要的 -->
     <slot class="dialog-main">main</slot>
     <template slot="footer">
-      <el-button v-if="showCancelButton" @click="cancel">{{ cancelButtonText }}</el-button>
-      <el-button v-if="showConfirmButton" :loading="loading" type="primary" @click="confirm">
+      <el-button v-if="showCancelButton" size="small" @click="cancel">{{ cancelButtonText }}</el-button>
+      <el-button v-if="showConfirmButton" size="small" :loading="confirmButtonLoading" type="primary" @click="confirm">
         {{ confirmButtonText }}
       </el-button>
     </template>
@@ -143,13 +143,8 @@ export default {
 
 export default {
   name: "CommonDialogBig",
-  inject: ["dialogBigVisible"],
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  inject: ["dialogBigAttributes"],
+  props: {},
   data() {
     return {
       title: "标题名称", // 弹窗的标题，默认值: 标题名称
@@ -159,8 +154,14 @@ export default {
       confirmButtonText: "确 定", // 确定按钮的文本内容，默认值: 确 定
     };
   },
+  computed:{
+    // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
+    confirmButtonLoading(){
+      return this.dialogBigAttributes.confirmButtonLoading || false
+    }
+  },
   created() {
-    const { title, showCancelButton, showConfirmButton, cancelButtonText, confirmButtonText } = this.dialogBigVisible;
+    const { title, showCancelButton, showConfirmButton, cancelButtonText, confirmButtonText } = this.dialogBigAttributes;
 
     // 大弹窗文本内容替换
     if (typeof title === "string" && title) {
@@ -185,8 +186,7 @@ export default {
   },
   methods: {
     handleBeforeClose() {
-      // 关闭弹窗的示例
-      // this.dialogBigVisible.visible = false;
+      this.dialogBigAttributes.visible = false;
     },
     handleClose() {},
     cancel() {
@@ -206,11 +206,12 @@ export default {
 </style>
 ```
 
-## Options
-| 参数              | 说明               | 类型    | 默认值 |
-| ----------------- | ------------------ | ------- | ------ |
-| title             | 弹窗的标题         | string  | 大弹窗 |
-| showCancelButton  | 是否显示取消按钮   | boolean | true   |
-| showConfirmButton | 是否显示确定按钮   | boolean | true   |
-| cancelButtonText  | 取消按钮的文本内容 | string  | 取 消  |
-| confirmButtonText | 确定按钮的文本内容 | string  | 确 定  |
+## Attributes
+| 参数                 | 说明               | 类型    | 默认值 |
+| -------------------- | ------------------ | ------- | ------ |
+| title                | 弹窗的标题         | string  | 大弹窗 |
+| showCancelButton     | 是否显示取消按钮   | boolean | true   |
+| showConfirmButton    | 是否显示确定按钮   | boolean | true   |
+| cancelButtonText     | 取消按钮的文本内容 | string  | 取 消  |
+| confirmButtonText    | 确定按钮的文本内容 | string  | 确 定  |
+| confirmButtonLoading | 确定按钮的loading  | boolean | -      |
