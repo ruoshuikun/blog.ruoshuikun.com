@@ -13,5 +13,5 @@ services:
       # - /Users/lin/docker/dockerCompose/ruoshuikun.com/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       # - /Users/lin/docker/dockerCompose/ruoshuikun.com/nginx/html:/usr/share/nginx/html
       ## 阿里服务器
-      - /root/docker/dockerCompose/blog.ruoshuikun.com/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-      - /root/docker/dockerCompose/blog.ruoshuikun.com/nginx/html:/usr/share/nginx/html
+      - /root/docker/dockerCompose/blog.ruoshuikun.com/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /root/docker/dockerCompose/blog.ruoshuikun.com/nginx/html:/usr/share/nginx/html:ro
