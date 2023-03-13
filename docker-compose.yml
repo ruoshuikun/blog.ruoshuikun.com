@@ -1,0 +1,13 @@
+version: '3'
+services:
+  ruoshuikun_nginx:
+    restart: always # 重启方式
+    image: nginx
+    container_name: nginx # 容器名称
+    ports:
+      # 对外暴露的端口定义
+      - 8111:80
+    volumes:
+      # 卷挂载路径
+      - /Users/lin/docker/dockerCompose/ruoshuikun.com/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - /Users/lin/docker/dockerCompose/ruoshuikun.com/nginx/html:/usr/share/nginx/html
