@@ -1,7 +1,7 @@
 ---
-title: "CommonDialogBig"
-date: 2023-03-13T16:07:06+08:00
-draft: false
+title: "CommonDialogSmall"
+date: 2023-03-14T14:06:52+08:00
+draft: true
 ---
 
 # 对话框的显示/隐藏，及相关配置
@@ -36,93 +36,98 @@ draft: false
 ```vue
 <template>  
   <div>  
-    <NewAndEditBig/>  
+    <NewAndEditSmall/>  
   </div>  
 </template>  
   
 <script>  
-import NewAndEditBig from "./components/NewAndEditBig.vue";
+import NewAndEditSmall from "./components/NewAndEditSmall.vue";
 
 export default {  
   name: "ExampleCommon",  
-  components: { NewAndEditBig },   
+  components: { NewAndEditSmall },   
   data() {  
     return {  
-      // 大弹窗的配置
-      dialogBig: {
+      // 小弹窗的配置
+      dialogSmall: {
         visible: false, // 弹窗显示隐藏
-        title: "大弹窗", // 弹窗的标题
+        title: "小弹窗", // 弹窗的标题
         // showCancelButton: false, // 是否显示取消按钮
         // showConfirmButton: false, // 是否显示确定按钮
         // cancelButtonText: "重 置", // 取消按钮的文本内容
         // confirmButtonText: "创 建", // 确定按钮的文本内容
         confirmButtonLoading: false, // 确定按钮的loading
-      },  
+      }, 
     };  
   },
   provide() {
     return {
-      dialogBigAttributes: this.dialogBig,
+      dialogSmallAttributes: this.dialogSmall,
     };
   },  
 };  
 </script>
 ```
 
-### NewAndEditBig.vue
+### NewAndEditSmall.vue
 
 >子组件
 
-这里直接使用 `<CommonDialogBig>` 组件是因为在 `main.js` 已经引入
+这里直接使用 `<CommonDialogMedium>` 组件是因为在 `main.js` 已经引入
 
 ```vue
 <template>
-  <CommonDialogBig @confirm="commonDialogConfirm" @cancel="commonDialogCancel">
-    <div>大弹窗</div>
-  </CommonDialogBig>
+  <CommonDialogSmall @confirm="commonDialogConfirm" @cancel="commonDialogCancel">
+    <div class="flex-x-start">
+      <el-image style="width: 18px; height: 18px" :src="require('@/assets/icon/warning2x.png')" fit></el-image>
+      <span class="deletetip">{{ tipsContent }}</span>
+    </div>
+  </CommonDialogSmall>
 </template>
 
 <script>
 export default {
-  name: "NewAndEditBig",
-  inject: ["dialogBigAttributes"],
+  name: "NewAndEditSmall",
+  inject: ["dialogSmallAttributes"],
   props: {},
   data() {
-    return {};
+    return {
+      tipsContent: "此操作将永久删除，是否继续？",
+    };
   },
   methods: {
-    /* 大弹窗的取消、确认事件 begin */
+    /* 小弹窗的取消、确认事件 begin */
     commonDialogCancel() {
-      console.log("大弹窗-子组件取消了");
-      this.dialogBigAttributes.visible = false;
+      console.log("小弹窗-子组件取消了");
+      this.dialogSmallAttributes.visible = false;
     },
     commonDialogConfirm() {
-      console.log("大弹窗-子组件确认了");
-      this.dialogBigAttributes.confirmButtonLoading = true;
+      console.log("小弹窗-子组件确认了");
+      this.dialogSmallAttributes.confirmButtonLoading = true;
       // 模拟接口请求，给按钮添加loading的效果
       setTimeout(() => {
-        this.dialogBigAttributes.confirmButtonLoading = false;
-        this.dialogBigAttributes.visible = false;
+        this.dialogSmallAttributes.confirmButtonLoading = false;
+        this.dialogSmallAttributes.visible = false;
       }, 1000);
     },
-    /* 大弹窗的取消、确认事件 end */
+    /* 小弹窗的取消、确认事件 end */
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="" scoped></style>
 ```
 
-### CommonDialogBig【大弹窗本身】
+### CommonDialogSmall【小弹窗本身】
 
->孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEditBig.vue处理】
+>孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEditMedium.vue处理】
 
 ```vue
 <template>
   <el-dialog
-    :visible.sync="dialogBigAttributes.visible"
+    :visible.sync="dialogSmallAttributes.visible"
     :before-close="handleBeforeClose"
-    width="1040px"
+    width="480px"
     class="asset-form"
     :title="title"
     @close="handleClose">
@@ -139,13 +144,14 @@ export default {
 
 <script>
 /**
- * @desc: 大弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：NewAndEditBig.vue】
+ * @desc: 小弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：index.vue】
  * Options:
  *    title: "标题名称", // 弹窗的标题，默认值: 标题名称
  *    showCancelButton: true, // 是否显示取消按钮，默认值: true
  *    showConfirmButton: true, // 是否显示确定按钮，默认值: true
  *    cancelButtonText: "取 消", // 取消按钮的文本内容，默认值: 取 消
  *    confirmButtonText: "确 定", // 确定按钮的文本内容，默认值: 确 定
+ *    confirmButtonLoading: false, // 确定按钮的loading，默认值: false
  *    confirmButtonLoading: false, // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
  * Other:
  *    采用 provide/inject 的方式触发事件【子/孙组件接收了父组件注入】
@@ -154,49 +160,49 @@ export default {
  */
 
 export default {
-  name: "CommonDialogBig",
-  inject: ["dialogBigAttributes"],
+  name: "CommonDialogSmall",
+  inject: ["dialogSmallAttributes"],
   props: {},
   data() {
     return {};
   },
-  computed:{
+  computed: {
     // 弹窗的标题，默认值: 标题名称
-    title(){
-      return this.dialogBigAttributes.title || '标题名称'
+    title() {
+      return this.dialogSmallAttributes.title || "标题名称";
     },
     // 是否显示取消按钮，默认值: true
-    showCancelButton(){
-      const { showCancelButton } = this.dialogBigAttributes
+    showCancelButton() {
+      const { showCancelButton } = this.dialogSmallAttributes;
       if (typeof showCancelButton === "boolean" && !showCancelButton) {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
     // 是否显示确定按钮，默认值: true
-    showConfirmButton(){
-      const { showConfirmButton } = this.dialogBigAttributes
+    showConfirmButton() {
+      const { showConfirmButton } = this.dialogSmallAttributes;
       if (typeof showConfirmButton === "boolean" && !showConfirmButton) {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
     // 取消按钮的文本内容，默认值: 取 消
-    cancelButtonText(){
-      return this.dialogBigAttributes.cancelButtonText || "取 消"
+    cancelButtonText() {
+      return this.dialogSmallAttributes.cancelButtonText || "取 消";
     },
     // 确定按钮的文本内容，默认值: 确 定
-    confirmButtonText(){
-      return this.dialogBigAttributes.confirmButtonText || "确 定"
+    confirmButtonText() {
+      return this.dialogSmallAttributes.confirmButtonText || "确 定";
     },
     // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
-    confirmButtonLoading(){
-      return this.dialogBigAttributes.confirmButtonLoading || false
-    }
+    confirmButtonLoading() {
+      return this.dialogSmallAttributes.confirmButtonLoading || false;
+    },
   },
   methods: {
     handleBeforeClose() {
-      this.dialogBigAttributes.visible = false;
+      this.dialogSmallAttributes.visible = false;
     },
     handleClose() {},
     cancel() {
@@ -214,13 +220,14 @@ export default {
   padding: 0 24px 24px;
 }
 </style>
+
 ```
 
 ## Attributes
 | 参数                 | 说明               | 类型    | 默认值 |
 | -------------------- | ------------------ | ------- | ------ |
 | visible              | 对话框显示/隐藏    | boolean | false  |
-| title                | 弹窗的标题         | string  | 大弹窗 |
+| title                | 弹窗的标题         | string  | 小弹窗 |
 | showCancelButton     | 是否显示取消按钮   | boolean | true   |
 | showConfirmButton    | 是否显示确定按钮   | boolean | true   |
 | cancelButtonText     | 取消按钮的文本内容 | string  | 取 消  |

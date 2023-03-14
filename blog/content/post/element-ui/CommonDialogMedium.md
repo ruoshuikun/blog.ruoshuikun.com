@@ -1,7 +1,7 @@
 ---
-title: "CommonDialogBig"
-date: 2023-03-13T16:07:06+08:00
-draft: false
+title: "CommonDialogMedium"
+date: 2023-03-14T13:56:23+08:00
+draft: true
 ---
 
 # 对话框的显示/隐藏，及相关配置
@@ -36,22 +36,22 @@ draft: false
 ```vue
 <template>  
   <div>  
-    <NewAndEditBig/>  
+    <NewAndEditMedium/>  
   </div>  
 </template>  
   
 <script>  
-import NewAndEditBig from "./components/NewAndEditBig.vue";
+import NewAndEditMedium from "./components/NewAndEditMedium.vue";
 
 export default {  
   name: "ExampleCommon",  
-  components: { NewAndEditBig },   
+  components: { NewAndEditMedium },   
   data() {  
     return {  
-      // 大弹窗的配置
-      dialogBig: {
+      // 中弹窗的配置
+      dialogMedium: {
         visible: false, // 弹窗显示隐藏
-        title: "大弹窗", // 弹窗的标题
+        title: "中弹窗", // 弹窗的标题
         // showCancelButton: false, // 是否显示取消按钮
         // showConfirmButton: false, // 是否显示确定按钮
         // cancelButtonText: "重 置", // 取消按钮的文本内容
@@ -62,67 +62,68 @@ export default {
   },
   provide() {
     return {
-      dialogBigAttributes: this.dialogBig,
+      dialogMediumAttributes: this.dialogMedium,
     };
   },  
 };  
 </script>
 ```
 
-### NewAndEditBig.vue
+### NewAndEditMedium.vue
 
 >子组件
 
-这里直接使用 `<CommonDialogBig>` 组件是因为在 `main.js` 已经引入
+这里直接使用 `<CommonDialogMedium>` 组件是因为在 `main.js` 已经引入
 
 ```vue
 <template>
-  <CommonDialogBig @confirm="commonDialogConfirm" @cancel="commonDialogCancel">
-    <div>大弹窗</div>
-  </CommonDialogBig>
+  <CommonDialogMedium @confirm="commonDialogConfirm" @cancel="commonDialogCancel">
+    <div>中弹窗</div>
+  </CommonDialogMedium>
 </template>
 
 <script>
 export default {
-  name: "NewAndEditBig",
-  inject: ["dialogBigAttributes"],
+  name: "NewAndEditMedium",
+  inject: ["dialogMediumAttributes"],
   props: {},
   data() {
     return {};
   },
   methods: {
-    /* 大弹窗的取消、确认事件 begin */
+    /* 中弹窗的取消、确认事件 begin */
     commonDialogCancel() {
-      console.log("大弹窗-子组件取消了");
-      this.dialogBigAttributes.visible = false;
+      console.log("中弹窗-子组件取消了");
+      this.dialogMediumAttributes.visible = false;
     },
     commonDialogConfirm() {
-      console.log("大弹窗-子组件确认了");
-      this.dialogBigAttributes.confirmButtonLoading = true;
+      console.log("中弹窗-子组件确认了");
+      this.dialogMediumAttributes.confirmButtonLoading = true;
       // 模拟接口请求，给按钮添加loading的效果
       setTimeout(() => {
-        this.dialogBigAttributes.confirmButtonLoading = false;
-        this.dialogBigAttributes.visible = false;
+        this.dialogMediumAttributes.confirmButtonLoading = false;
+        this.dialogMediumAttributes.visible = false;
       }, 1000);
     },
-    /* 大弹窗的取消、确认事件 end */
+    /* 中弹窗的取消、确认事件 end */
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="" scoped></style>
+
 ```
 
-### CommonDialogBig【大弹窗本身】
+### CommonDialogMedium【中弹窗本身】
 
->孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEditBig.vue处理】
+>孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEditMedium.vue处理】
 
 ```vue
 <template>
   <el-dialog
-    :visible.sync="dialogBigAttributes.visible"
+    :visible.sync="dialogMediumAttributes.visible"
     :before-close="handleBeforeClose"
-    width="1040px"
+    width="800px"
     class="asset-form"
     :title="title"
     @close="handleClose">
@@ -139,7 +140,7 @@ export default {
 
 <script>
 /**
- * @desc: 大弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：NewAndEditBig.vue】
+ * @desc: 中弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：NewAndEditMedium.vue】
  * Options:
  *    title: "标题名称", // 弹窗的标题，默认值: 标题名称
  *    showCancelButton: true, // 是否显示取消按钮，默认值: true
@@ -154,49 +155,49 @@ export default {
  */
 
 export default {
-  name: "CommonDialogBig",
-  inject: ["dialogBigAttributes"],
+  name: "CommonDialogMedium",
+  inject: ["dialogMediumAttributes"],
   props: {},
   data() {
     return {};
   },
-  computed:{
+  computed: {
     // 弹窗的标题，默认值: 标题名称
-    title(){
-      return this.dialogBigAttributes.title || '标题名称'
+    title() {
+      return this.dialogMediumAttributes.title || "标题名称";
     },
     // 是否显示取消按钮，默认值: true
-    showCancelButton(){
-      const { showCancelButton } = this.dialogBigAttributes
+    showCancelButton() {
+      const { showCancelButton } = this.dialogMediumAttributes;
       if (typeof showCancelButton === "boolean" && !showCancelButton) {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
     // 是否显示确定按钮，默认值: true
-    showConfirmButton(){
-      const { showConfirmButton } = this.dialogBigAttributes
+    showConfirmButton() {
+      const { showConfirmButton } = this.dialogMediumAttributes;
       if (typeof showConfirmButton === "boolean" && !showConfirmButton) {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
     // 取消按钮的文本内容，默认值: 取 消
-    cancelButtonText(){
-      return this.dialogBigAttributes.cancelButtonText || "取 消"
+    cancelButtonText() {
+      return this.dialogMediumAttributes.cancelButtonText || "取 消";
     },
     // 确定按钮的文本内容，默认值: 确 定
-    confirmButtonText(){
-      return this.dialogBigAttributes.confirmButtonText || "确 定"
+    confirmButtonText() {
+      return this.dialogMediumAttributes.confirmButtonText || "确 定";
     },
     // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
-    confirmButtonLoading(){
-      return this.dialogBigAttributes.confirmButtonLoading || false
-    }
+    confirmButtonLoading() {
+      return this.dialogMediumAttributes.confirmButtonLoading || false;
+    },
   },
   methods: {
     handleBeforeClose() {
-      this.dialogBigAttributes.visible = false;
+      this.dialogMediumAttributes.visible = false;
     },
     handleClose() {},
     cancel() {
@@ -220,7 +221,7 @@ export default {
 | 参数                 | 说明               | 类型    | 默认值 |
 | -------------------- | ------------------ | ------- | ------ |
 | visible              | 对话框显示/隐藏    | boolean | false  |
-| title                | 弹窗的标题         | string  | 大弹窗 |
+| title                | 弹窗的标题         | string  | 中弹窗 |
 | showCancelButton     | 是否显示取消按钮   | boolean | true   |
 | showConfirmButton    | 是否显示确定按钮   | boolean | true   |
 | cancelButtonText     | 取消按钮的文本内容 | string  | 取 消  |
