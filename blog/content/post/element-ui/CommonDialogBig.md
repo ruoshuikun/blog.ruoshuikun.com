@@ -11,9 +11,24 @@ draft: false
 ## 目录结构
 ```bash
 .
+.
+├── App.vue
+├── main.js # 全局配置组件
 ├── components
-│   ├── NewAndEdit.vue
-└── index.vue
+│   ├── Common
+│   │   ├── CommonDialogBig # 大弹窗组件
+│   │   │   └── index.vue
+│   │   ├── CommonDialogMedium # 中弹窗组件
+│   │   │   └── index.vue
+│   │   ├── CommonDialogSmall # 小弹窗组件
+│   │   │   └── index.vue
+└── views
+    └── exampleCommon
+        ├── components
+        │   ├── NewAndEditBig.vue # 大弹窗组件使用
+        │   ├── NewAndEditMedium.vue # 中弹窗组件使用
+        │   └── NewAndEditSmall.vue # 小弹窗组件使用
+        └── index.vue
 ```
 
 ## 举个例子
@@ -21,16 +36,16 @@ draft: false
 ```vue
 <template>  
   <div>  
-    <NewAndEdit/>  
+    <NewAndEditBig/>  
   </div>  
 </template>  
   
 <script>  
-import NewAndEdit from "./components/NewAndEdit.vue";
+import NewAndEditBig from "./components/NewAndEditBig.vue";
 
 export default {  
-  name: "parent",  
-  components: { NewAndEdit },   
+  name: "ExampleCommon",  
+  components: { NewAndEditBig },   
   data() {  
     return {  
       // 大弹窗的配置
@@ -41,7 +56,7 @@ export default {
         // showConfirmButton: false, // 是否显示确定按钮
         // cancelButtonText: "重 置", // 取消按钮的文本内容
         // confirmButtonText: "创 建", // 确定按钮的文本内容
-        // confirmButtonLoading: false, // 确定按钮的loading
+        confirmButtonLoading: false, // 确定按钮的loading
       },  
     };  
   },
@@ -54,38 +69,32 @@ export default {
 </script>
 ```
 
-### NewAndEdit.vue
+### NewAndEditBig.vue
 
 >子组件
 
 这里直接使用 `<CommonDialogBig>` 组件是因为在 `main.js` 已经引入
 
 ```vue
-<template>  
-  <CommonDialogBig 
-    @confirm="commonDialogConfirm" 
-    @cancel="commonDialogCancel"
-  >
-	  <el-form>
-	  <!-- form 表单部分 -->
-	  </el-form>
+<template>
+  <CommonDialogBig @confirm="commonDialogConfirm" @cancel="commonDialogCancel">
+    <div>大弹窗</div>
   </CommonDialogBig>
-</template>  
-  
-<script> 
-export default {  
-  name: "NewAndEdit",  
-  components: { Son },   
-  data() {  
-    return {  
-      commonDialogBigLoading: false, // 大弹窗确定按钮的loading		  
-    };  
-  }, 
+</template>
+
+<script>
+export default {
+  name: "NewAndEditBig",
+  inject: ["dialogBigAttributes"],
+  props: {},
+  data() {
+    return {};
+  },
   methods: {
     /* 大弹窗的取消、确认事件 begin */
     commonDialogCancel() {
       console.log("大弹窗-子组件取消了");
-      this.dialogBigVisible.visible = false;
+      this.dialogBigAttributes.visible = false;
     },
     commonDialogConfirm() {
       console.log("大弹窗-子组件确认了");
@@ -93,18 +102,20 @@ export default {
       // 模拟接口请求，给按钮添加loading的效果
       setTimeout(() => {
         this.dialogBigAttributes.confirmButtonLoading = false;
-        this.dialogBigVisible.visible = false;
+        this.dialogBigAttributes.visible = false;
       }, 1000);
     },
     /* 大弹窗的取消、确认事件 end */
   },
-};  
+};
 </script>
+
+<style lang="scss" scoped></style>
 ```
 
 ### CommonDialogBig【大弹窗本身】
 
->孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEdit.vue处理】
+>孙子组件，只做展示，逻辑部分移交给它的父组件NewAndEditBig.vue处理】
 
 ```vue
 <template>
@@ -128,13 +139,14 @@ export default {
 
 <script>
 /**
- * @desc: 大弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：NewAndEdit.vue】
+ * @desc: 大弹窗组件。只做展示，逻辑部分移交给它的父组件处理，如：NewAndEditBig.vue】
  * Options:
  *    title: "标题名称", // 弹窗的标题，默认值: 标题名称
  *    showCancelButton: true, // 是否显示取消按钮，默认值: true
  *    showConfirmButton: true, // 是否显示确定按钮，默认值: true
  *    cancelButtonText: "取 消", // 取消按钮的文本内容，默认值: 取 消
  *    confirmButtonText: "确 定", // 确定按钮的文本内容，默认值: 确 定
+ *    confirmButtonLoading: false, // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
  * Other:
  *    采用 provide/inject 的方式触发事件【子/孙组件接收了父组件注入】
  * @author: zhang lin
@@ -146,42 +158,40 @@ export default {
   inject: ["dialogBigAttributes"],
   props: {},
   data() {
-    return {
-      title: "标题名称", // 弹窗的标题，默认值: 标题名称
-      showCancelButton: true, // 是否显示取消按钮，默认值: true
-      showConfirmButton: true, // 是否显示确定按钮，默认值: true
-      cancelButtonText: "取 消", // 取消按钮的文本内容，默认值: 取 消
-      confirmButtonText: "确 定", // 确定按钮的文本内容，默认值: 确 定
-    };
+    return {};
   },
   computed:{
+    // 弹窗的标题，默认值: 标题名称
+    title(){
+      return this.dialogBigAttributes.title || '标题名称'
+    },
+    // 是否显示取消按钮，默认值: true
+    showCancelButton(){
+      const { showCancelButton } = this.dialogBigAttributes
+      if (typeof showCancelButton === "boolean" && !showCancelButton) {
+        return false
+      }
+      return true
+    },
+    // 是否显示确定按钮，默认值: true
+    showConfirmButton(){
+      const { showConfirmButton } = this.dialogBigAttributes
+      if (typeof showConfirmButton === "boolean" && !showConfirmButton) {
+        return false
+      }
+      return true
+    },
+    // 取消按钮的文本内容，默认值: 取 消
+    cancelButtonText(){
+      return this.dialogBigAttributes.cancelButtonText || "取 消"
+    },
+    // 确定按钮的文本内容，默认值: 确 定
+    confirmButtonText(){
+      return this.dialogBigAttributes.confirmButtonText || "确 定"
+    },
     // 确定按钮的loading-如果配置confirmButtonLoading，则显示loading效果
     confirmButtonLoading(){
       return this.dialogBigAttributes.confirmButtonLoading || false
-    }
-  },
-  created() {
-    const { title, showCancelButton, showConfirmButton, cancelButtonText, confirmButtonText } = this.dialogBigAttributes;
-
-    // 大弹窗文本内容替换
-    if (typeof title === "string" && title) {
-      this.title = title;
-    }
-    // 隐藏取消按钮
-    if (typeof showCancelButton === "boolean" && !showCancelButton) {
-      this.showCancelButton = showCancelButton;
-    }
-    // 隐藏确认按钮
-    if (typeof showConfirmButton === "boolean" && !showConfirmButton) {
-      this.showConfirmButton = showConfirmButton;
-    }
-    // 取消按钮文本内容替换
-    if (typeof cancelButtonText === "string" && cancelButtonText) {
-      this.cancelButtonText = cancelButtonText;
-    }
-    // 确认按钮文本内容替换
-    if (typeof confirmButtonText === "string" && confirmButtonText) {
-      this.confirmButtonText = confirmButtonText;
     }
   },
   methods: {
