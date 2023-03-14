@@ -1,7 +1,7 @@
 ---
 title: "CommonDialogMedium"
 date: 2023-03-14T13:56:23+08:00
-draft: true
+draft: false
 ---
 
 # 对话框的显示/隐藏，及相关配置

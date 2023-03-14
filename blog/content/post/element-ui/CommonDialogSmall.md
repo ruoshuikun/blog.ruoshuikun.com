@@ -1,7 +1,7 @@
 ---
 title: "CommonDialogSmall"
 date: 2023-03-14T14:06:52+08:00
-draft: true
+draft: false
 ---
 
 # 对话框的显示/隐藏，及相关配置
